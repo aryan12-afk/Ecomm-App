@@ -115,8 +115,8 @@ git remote add upstream https://github.com/gdgc-ace/Ecomm-App-Supabase.git
 # 3. Install all dependencies
 npm install
 
-# 4. Setup database (SQLite)
-cd backend && npm run setup:sqlite && cd ..
+# 4. Setup database (Supabase PostgreSQL)
+cd backend && npm run setup && cd ..
 
 # 5. Start development servers
 npm run dev
@@ -146,8 +146,8 @@ npm run preview          # Preview production build
 
 # From backend/
 cd backend
-npm run dev:sqlite       # Start with SQLite database
-npm run setup:sqlite    # Setup SQLite database (migrations + seed)
+npm run dev              # Start development server
+npm run setup           # Setup database (migrations + seed)
 npm run prisma:studio   # Open Prisma database UI
 ```
 

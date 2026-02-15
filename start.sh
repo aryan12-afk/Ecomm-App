@@ -17,7 +17,7 @@ if lsof -i :3000 &> /dev/null; then
     echo -e "${YELLOW}⚠ Backend already running on port 3000${NC}"
 else
     echo "Starting backend..."
-    cd backend && npm run dev:sqlite &
+    cd backend && npm run dev &
 fi
 
 if lsof -i :5173 &> /dev/null; then

@@ -14,9 +14,7 @@ if (dbType === "sqlite") {
   dbUrl = process.env.DATABASE_URL || "";
 }
 
-const schemaFile = dbType === "postgresql" 
-  ? "prisma/schema-postgres.prisma" 
-  : "prisma/schema-sqlite.prisma";
+const schemaFile = "prisma/schema.prisma";
 
 export default defineConfig({
   schema: schemaFile,

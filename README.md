@@ -81,7 +81,7 @@ cd backend && npm run dev:sqlite
 ### Backend
 - **Express.js** + TypeScript
 - **Prisma ORM** - Database ORM
-- **SQLite** - Local database (easy setup)
+- **PostgreSQL** - Database (Supabase)
 - **Helmet** - Security middleware
 - **CORS** - Cross-origin resource sharing
 - **Morgan** - HTTP request logging
@@ -126,11 +126,8 @@ Ecomm-App-Supabase/
 
 #### Backend (`backend/.env`)
 ```env
-# Database Type: "sqlite" or "postgresql"
-DATABASE_TYPE="sqlite"
-
-# SQLite (used if DATABASE_TYPE="sqlite")
-DATABASE_URL="file:./dev.db"
+# Database URL (Supabase PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:5432/database"
 
 # Server Configuration
 PORT=3000
@@ -145,7 +142,11 @@ VITE_API_URL=http://localhost:3000/api
 
 ## 🗃️ Database Setup
 
-### Using SQLite (Default - No Installation Required)
+### Using Supabase PostgreSQL
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Get your connection string from Settings → Database
+3. Update `DATABASE_URL` in `backend/.env`
 
 ```bash
 cd backend
@@ -156,17 +157,6 @@ This will:
 1. Generate Prisma client
 2. Create database migrations
 3. Seed sample products
-
-### Using PostgreSQL
-
-```bash
-cd backend
-# Update .env with your PostgreSQL connection string
-DATABASE_TYPE="postgresql"
-DATABASE_URL="postgresql://user:password@localhost:5432/ecommerce"
-
-npm run setup:pg
-```
 
 ## 📡 API Endpoints
 
@@ -321,10 +311,10 @@ lsof -ti :5173 | xargs kill -9
 
 ### Database Issues
 ```bash
-# Reset database
+# Reset database - drop all tables and re-run migrations
 cd backend
-rm -f prisma/dev.db
-npm run setup
+npm run prisma migrate reset
+npm run prisma:seed
 ```
 
 ### Clear Cache

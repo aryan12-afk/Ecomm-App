@@ -65,40 +65,35 @@ if %ERRORLEVEL% neq 0 (
 echo   [OK] All dependencies installed (root + workspaces)
 echo.
 
-:: Setup database (SQLite)
-echo [3/6] Setting Up Database (SQLite)...
-if not exist "backend\package.json" (
-    echo   [WARNING] Backend not found, skipping database setup
-) else (
-    cd /d backend
-    
-    :: Generate Prisma client
-    echo   Generating Prisma client...
-    call npx prisma generate
-    if %ERRORLEVEL% neq 0 (
-        echo   [WARNING] Prisma generate failed (this may be OK if no schema)
-    )
-    
-    :: Create and migrate database
-    echo   Creating database...
-    call npx prisma db push
-    if %ERRORLEVEL% neq 0 (
-        echo   [WARNING] Prisma db push failed (database may already exist)
-    )
-    
-    :: Seed database
-    echo   Seeding database with sample products...
-    call npx tsx prisma/seed.ts 2>nul
-    if %ERRORLEVEL% neq 0 (
-        call npm run prisma:seed 2>nul
-        if %ERRORLEVEL% neq 0 (
-            echo   [WARNING] Seed may have already run or failed
-        )
-    )
-    
-    cd /d ..
-    echo   [OK] Database setup complete
+:: Setup database (PostgreSQL/Supabase)
+echo [3/6] Setting Up Database (PostgreSQL/Supabase)...
+echo.
+echo   IMPORTANT: Configure DATABASE_URL in backend\.env first!
+echo   Get your connection string from Supabase dashboard.
+echo.
+
+:: Check if DATABASE_URL is set
+if not exist "backend\.env" (
+    echo   [WARNING] backend\.env not found
+    echo   Creating default .env file...
+    (
+        echo DATABASE_URL=
+        echo PORT=3000
+        echo NODE_ENV=development
+    ) > backend\.env
 )
+
+cd /d backend
+
+:: Run Prisma setup
+echo   Running Prisma setup...
+call npm run setup
+if %ERRORLEVEL% neq 0 (
+    echo   [WARNING] Prisma setup failed. Check your DATABASE_URL.
+)
+
+cd /d ..
+echo   [OK] Database setup complete
 echo.
 
 :: Build the project

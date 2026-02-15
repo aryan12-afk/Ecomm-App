@@ -6,36 +6,20 @@ import { config } from 'dotenv';
 
 config({ path: path.resolve(process.cwd(), ".env") });
 
-const dbType = process.env.DATABASE_TYPE || "sqlite";
-const dbUrl = process.env.DATABASE_URL || "file:./dev.db";
+const dbUrl = process.env.DATABASE_URL;
 
-let prismaClientSingleton: () => PrismaClient;
-
-if (dbType === "postgresql") {
-  const pool = new Pool({ connectionString: dbUrl });
-  const adapter = new PrismaPg(pool);
-
-  prismaClientSingleton = () => {
-    return new PrismaClient({ adapter });
-  };
-} else {
-  const { PrismaLibSql } = require('@prisma/adapter-libsql');
-  const { createClient } = require('@libsql/client');
-
-  const libsql = createClient({ url: dbUrl });
-  const adapter = new PrismaLibSql(libsql);
-
-  prismaClientSingleton = () => {
-    return new PrismaClient({ adapter });
-  };
+if (!dbUrl) {
+  throw new Error('DATABASE_URL environment variable is required');
 }
 
-declare global {
-  var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
-}
+const pool = new Pool({ connectionString: dbUrl });
+const adapter = new PrismaPg(pool);
 
-const prisma = globalThis.prisma ?? prismaClientSingleton();
+const prisma = new PrismaClient({ adapter });
 
 export default prisma;
 
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (globalThis as any).prisma = prisma;
+}
