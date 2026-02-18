@@ -55,7 +55,7 @@ jobs:
     strategy :
       matrix :
         # see what node versions are supported by our application
-        node-version : [20.x,22.x,24.x]
+        node-version : [^v22.18.0]   # node version we are testing ( must be >20 )
 
     defaults :
       run:
